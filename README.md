@@ -1,4 +1,25 @@
+# 
+
+## start with
+```
+/usr/bin/python3.8 -m flask run --cert=certificate.pem --key=certificate.key
+```
+
+#### Author: Sascha Frank
+##### sascha.frank.88@gmx.de
+
+
+----
+
+### Adapted and improved from 
+
+
+----
+
+
 # How to create an OAuth 2.0 Provider
+
+
 
 This is an example of OAuth 2.0 server in [Authlib](https://authlib.org/).
 If you are looking for old Flask-OAuthlib implementation, check the
