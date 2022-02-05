@@ -1,0 +1,15 @@
+w[Unit]
+Description=flask-oauth2-server observer
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/usr/local
+ExecStart=/usr/bin/python3.8 observer.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=oauth2-server-observer
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=flask-oauth2-server
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/usr/local/oauth2-server
+ExecStart=/usr/bin/python3.8 -m flask run --cert=oauth2.wyl-online.de.pem --key=oauth2.wyl-online.de.key
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=oauth2-server
+
+[Install]
+WantedBy=multi-user.target
