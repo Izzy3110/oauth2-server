@@ -2,6 +2,7 @@
 {% block title %}Applications{% endblock %}
 {% block nav %}{{ super() }}{% endblock %}
 {% block sidebar %}{{ super() }}{% endblock %}
+
 {% block content %}
 <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -10,75 +11,21 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Clients</h1>
+            <h1 class="m-0">Applications</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Starter Page</li>
+              <li class="breadcrumb-item active">Applications</li>
+			  <li class="breadcrumb-item">Clients</li>
+			  <li class="breadcrumb-item">Scopes</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-<style>
-
-.single_client {
-	width: 678px;
-	max-width: 678px;
-	margin: 1em;
-	/* border: 1px solid #333; */
-	padding: .3em;
-}
-
-.client_width_max {
-	max-width: 645px;
-}
-
-.client_width_min {
-	min-width: 645px;
-}
-
-.cell {
-	display: table-cell;
-}
-
-.client_metadata_cell, .client_info_cell {
-	width: 225px;
-}
-
-.client_metadata_value_cell, .client_info_value_cell {
-	width: 420px;
-}
-
-.tbl  {
-	display: table;
-}
-
-.tbl_row {
-	display: table-row;
-}
-
-.tbl_full  {
-	display: table;
-	width: 100%;
-}
-
-.sortable {
- 
-  /*
-  border: 1px solid rgb(0, 0, 0);
-  border-image: none;
-  */
-  min-height: 70px;
-  float: left;
-}
-
-#clients_container {
-overflow: auto;
-}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
@@ -86,74 +33,17 @@ overflow: auto;
         <div class="row">
           <div class="col-md-12">
 
-            {% if user %}
+{% if user %}
 <style>pre{white-space:wrap}</style>
 <div>Logged in as <strong>{{user}}</strong> (<a href="{{ url_for('.logout') }}">Log Out</a>)</div>
-<div id="clients_container" class="container-fluid" style="margin: .4em; width: 84vw; border: 1px solid #ECECEC;">
-  <h2>Clients</h2>
-  
+<div id="applications_container" class="container-fluid" style="margin: .4em; width: 84vw; border: 1px solid #ECECEC;">
+
+	<h2>Applications</h2>
   <div>
-  <a href="{{ url_for('.create_client') }}">Create Client</a>
-</div>
-  
-  
-{% for client in clients %}
-  <div class="single_client  sortable" data-client-name="{{ client.client_metadata['client_name'] }}" data-client-id="{{ client.client_info['client_id'] }}">
-  <h3>{{ client.client_metadata['client_name'] }}</h3>
-    <div data-id="client_metadata" class="client_width_max client_width_min">
-	  <div class="tbl">
-	  
-	  {% for key in client.client_metadata %}
-	  <div class="tbl_row">
-	  <div class="cell client_metadata_cell">
-	  {{ key }}
-	  </div>
-	  <div class="cell client_metadata_value_cell">
-	  <span data-key="client_metadata" data-key-value="{{ key }}" data-value="{{ client.client_metadata[key] }}">{{ client.client_metadata[key] }}</span>
-	  </div>
-	  </div>
-	  {% endfor %}
-	  
-	  </div>
-  </div>
-  <div data-id="client_info" class="client_width_max client_width_min">
-	  <div class="tbl">
-	  
-	  {% for key in client.client_info %}
-	  <div class="tbl_row">
-	  <div class="cell client_info_cell">
-	  {{ key }}
-	  </div>
-	  <div class="cell client_info_value_cell">
-	  <span data-key="client_info" data-key-value="{{ key }}" data-value="{{ client.client_info[key] }}">{{ client.client_info[key] }}</span>
-	  </div>
-	  </div>
-	  {% endfor %}
-	  
-	  </div>
-  </div>
-  <br>
+  <a href="{{ url_for('.create_application') }}">Create Application</a>
 </div>
 
-
-{% endfor %}
-  <div style="clear: both"></div>
-  </div>
-{% if authenticated %}
-<div id="authenticated" style="width: 200px; border: 1px solid #ECECEC;">
-  <div><h4>Authenticated</h4></div>
-  <div style="display: table; width: 100%">
-{% for username in authenticated.keys() %}
-    <div style="display: table-row">
-      <div style="display: table-cell; width: 150px;" data-id="authenticated-user">{{ username }}</div>
-      <div style="display: table-cell; width: auto;" data-id="authenticated-status">{{ authenticated[username] }}</div>
-    </div>
-
-{% endfor %}
-  </div>
 </div>
-{% endif %}
-
 {% else %}
 <form action="" method="post">
   <input class="ui-autocomplete-input ui-corner-all" type="text" name="username" placeholder="username" autocomplete="on"><br>

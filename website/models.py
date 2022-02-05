@@ -13,6 +13,27 @@ from .wyl.security import SecurityManager
 db = SQLAlchemy()
 
 
+class Applications(db.Model):
+    __tablename__ = 'applications'
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(250), unique=True, nullable=False)
+    name = db.Column(db.String(250), unique=True, nullable=False)
+    user_id = db.Column(db.String(250), unique=True, nullable=False)
+    date_registered = db.Column(db.String(120))
+    date_modified = db.Column(db.String(120))
+    client_ids = db.Column(db.String(250))
+
+class ApplicationsModifications(db.Model):
+    __tablename__ = 'applications_modifications'
+    id = db.Column(db.Integer, primary_key=True)
+    application_id = db.Column(
+    db.Integer, db.ForeignKey('applications.id', ondelete='CASCADE'))
+    mod_name = db.Column(db.String(120))
+    modification_made = db.Column(db.String(120))
+    date_modified = db.Column(db.String(120))
+    applications = db.relationship('Applications')
+        
+
 class User(db.Model):
     __tablename__ = 'user'
 

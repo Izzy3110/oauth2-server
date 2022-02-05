@@ -1,4 +1,9 @@
-<script src="/static/jquery-ui-1.13.1.custom/external/jquery/jquery.js"></script>
+<!doctype html>
+<html>
+  <head>
+    {% block head %}
+    <title>{% block title %}{% endblock %} - My Webpage</title>
+	<script src="/static/jquery-ui-1.13.1.custom/external/jquery/jquery.js"></script>
 <script src="/static/jquery-ui-1.13.1.custom/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="/static/jquery-ui-1.13.1.custom/jquery-ui.min.css">
 <link rel="stylesheet" href="/static/jquery-ui-1.13.1.custom/jquery-ui.structure.min.css">
@@ -8,55 +13,12 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="/static/adminlte/plugins/fontawesome-free/css/all.min.css">
-  
-  <script>
-  
-  function htmlDecode(input) {
-  var doc = new DOMParser().parseFromString(input, "text/html");
-  return doc.documentElement.textContent;
-}
-  
-  function fallbackCopyTextToClipboard(text) {
-  var textArea = document.createElement("textarea");
-  textArea.value = text;
-  
-  // Avoid scrolling to bottom
-  textArea.style.top = "0";
-  textArea.style.left = "0";
-  textArea.style.position = "fixed";
-
-  document.body.appendChild(textArea);
-  textArea.focus();
-  textArea.select();
-
-  try {
-    var successful = document.execCommand('copy');
-    var msg = successful ? 'successful' : 'unsuccessful';
-    console.log('Fallback: Copying text command was ' + msg);
-  } catch (err) {
-    console.error('Fallback: Oops, unable to copy', err);
-  }
-
-  document.body.removeChild(textArea);
-}
-function copyTextToClipboard(text) {
-  if (!navigator.clipboard) {
-    fallbackCopyTextToClipboard(text);
-    return;
-  }
-  navigator.clipboard.writeText(text).then(function() {
-    console.log('Async: Copying to clipboard was successful!');
-  }, function(err) {
-    console.error('Async: Could not copy text: ', err);
-  });
-}
-  
-  </script>
-  
-<div class="wrapper">
-
-                                            
-  <!-- Navbar -->
+    {% endblock %}
+  </head>
+  <body>
+  <div class="wrapper">
+  {% block nav %}
+   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
@@ -204,8 +166,9 @@ function copyTextToClipboard(text) {
     </ul>
   </nav>
   <!-- /.navbar -->
-
-    <!-- Main Sidebar Container -->
+ {% endblock %}
+{% block sidebar %}
+	    <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
@@ -246,17 +209,6 @@ function copyTextToClipboard(text) {
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-			   <li class="nav-item">
-            <a href="/logout" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
-              <p>
-                Applications
-                <!-- <span class="right badge badge-danger">New</span> -->
-              </p>
-            </a>
-          </li>
-			   
-			   
           <li class="nav-item menu-closed">
             <a href="/" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -297,274 +249,10 @@ function copyTextToClipboard(text) {
     </div>
     <!-- /.sidebar -->
   </aside>
-
-<!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Scopes</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Starter Page</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
-<style>
-
-.single_client {
-	width: 678px;
-	max-width: 678px;
-	margin: 1em;
-	/* border: 1px solid #333; */
-	padding: .3em;
-}
-
-.client_width_max {
-	max-width: 645px;
-}
-
-.client_width_min {
-	min-width: 645px;
-}
-
-.cell {
-	display: table-cell;
-}
-
-.client_metadata_cell, .client_info_cell {
-	width: 225px;
-}
-
-.client_metadata_value_cell, .client_info_value_cell {
-	width: 420px;
-}
-
-.tbl  {
-	display: table;
-}
-
-.tbl_row {
-	display: table-row;
-}
-
-.tbl_full  {
-	display: table;
-	width: 100%;
-}
-
-.sortable {
- 
-  /*
-  border: 1px solid rgb(0, 0, 0);
-  border-image: none;
-  */
-  min-height: 70px;
-  float: left;
-}
-
-#clients_container {
-	overflow: auto;
-}
-
-.scope_method {
-
-}
-
-.scope_url {
-
-}
-
-.scope_title {
-min-height: 6vh; 
-margin: 1em;
-}
-
-.scope_title_row_height {
-	height: 4vh;
-}
-div[data-id='scope_method'], div[data-id='scope_url'] {
-	vertical-align: middle;
-}
-div[data-id='scope_method'] {
-	text-align:center;
-}
-div[data-id='scope_url'] {
-	text-align:left;
-	padding-left: .3em;
-}
-
-.scope_method_width {
-	width: 4vw;
-}
-
-.scope_content_cell {
-	width: 100%;
-}
-
-div[data-id='scope_title_row'] {
-	box-shadow: inset 0 3px 6px rgba(0,0,0,0.16), 0 4px 6px rgba(0,0,0,0.45);
-  border-radius: 10px;
-}
-
-span.scope_url {
-
-border: 1px solid #BFBFBF;
-border-radius: .2em;
-padding: .2em;
-
-}
-
-.scope_url_width {
-	width: auto;
-}
-
-
-span[data-id='copy_endpoint_url'] {
-	opacity: 0;
-}
-</style>
-
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-        <!-- /.row -->
-        <div class="row">
-          <div class="col-md-12">
-
-{% if user %}
-	<style>pre{white-space:wrap}</style>
-	
-	<h2>endpoints</h2>
-	{% for _url in scopes["urls"] %}
-
-	<div class="scope_title">
-		<div class="tbl tbl_full">
-			<div data-id="scope_title_row" class="tbl_row scope_title_row_height">
-				<div data-id="scope_method" class="cell scope_title_row_height scope_method_width">
-					<span class="scope_method">{{ _url["method"] }}</span>
-				</div>
-				
-				<div data-id="scope_url" class="cell scope_title_row_height scope_url_width">				
-					<span class="scope_url">{{ _url["url"] }}<span data-id="copy_endpoint_url"><sup><i style="padding-left: .2em;" class="far fa-copy"></i></sup></span></span>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	{% endfor %}
-	
-	<h2>scope endpoints</h2>
-	{% for scope_ in scopes["scopes"] %}
-	<div class="scope_title">
-		<div class="tbl tbl_full">
-			<div data-id="scope_title_row" class="tbl_row scope_title_row_height">
-				<div data-id="scope_method" class="cell scope_title_row_height scope_method_width">
-					<span class="scope_method">{{ scope_["method"] }}</span>
-				</div>
-				
-				<div data-id="scope_url" class="cell scope_title_row_height scope_url_width">				
-					<span class="scope_url">{{ scope_["url"] }}<span data-id="copy_endpoint_url"><sup><i style="padding-left: .2em;" class="far fa-copy"></i></sup></span></span>
-				</div>
-			</div>
-		</div>
-		<div class="tbl tbl_full" style="margin-top: 0.2em; margin-bottom: 1em;">
-		<div data-id="scope_content_row" class="tbl_row">
-			<div class="cell scope_content_cell" style="height: 10vh;">
-			{% for key in scope_ %}
-			{% if key != "method" and key != "url" %}
-			{{ key }}: {{ scope_[key] }}<br>
-			{% endif %}
-			{% endfor %}
-			</div>
-			</div>
-		</div>
-	</div>	
-	
-	{% endfor %}
-
-
-{% else %}
-<form action="" method="post">
-  <input class="ui-autocomplete-input ui-corner-all" type="text" name="username" placeholder="username" autocomplete="on"><br>
-    {% for error in errors %}
-{% if error["type"] == "username" %}
-  <div class="error_container">
-  <span data-code="">
-    {% if error["error_code"] == "EMPTY_STRING" %}
-    Username cannot be empty
-    {% endif %}
-    </span>
-    </div>
-  {% endif %}
-  {% endfor %}
-
-<input class="ui-autocomplete-input ui-corner-all" type="text" name="email" placeholder="email" autocomplete="on"><br>
-{% for error in errors %}
-{% if error["type"] == "email" %}
-  <div class="error_container">
-  <span data-code="">
-    {% if error["error_code"] == "EMPTY_STRING" %}
-    Email cannot be empty
-     {% elif error["error_code"] == "NOT_UNIQUE_STRING" %}
-    Email must be unique
-    {% endif %}
-    </span>
-    </div>
-  {% endif %}
-  {% endfor %}
-  <input class="ui-corner-all" type="password" name="password" placeholder="password"><br>
-      {% for error in errors %}
-  {{ error["type"] }}
-{% if error["type"] == "password" %}
-  <div class="error_container">
-  <span data-code="">
-    {% if error["error_code"] == "EMPTY_STRING" %}
-    Password cannot be empty
-    {% elif error["error_code"] == "NOT_MATCH" %}
-
-    Password/User Combination not found
-
-
-    {% endif %}
-    </span>
-    </div>
-{% endif %}
-{% endfor %}
-<button class="ui-button" type="submit">Login / Signup</button>
-</form>
-
-
-
-{% endif %}
-         </div>
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-
-
-  <!-- Control Sidebar -->
+{% endblock %}
+{% block content %}{% endblock %}
+{% block right_content %}
+<!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
     <div class="p-3">
@@ -573,7 +261,8 @@ span[data-id='copy_endpoint_url'] {
     </div>
   </aside>
   <!-- /.control-sidebar -->
-
+{% endblock %}
+{% block footer %}
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- To the right -->
@@ -592,61 +281,6 @@ span[data-id='copy_endpoint_url'] {
 <script src="/static/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/static/adminlte/js/adminlte.min.js"></script>
-<script>
-/*
-  $(document).Toasts('create', {
-  title: 'Toast Title',
-  body: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-})
-  $(document).Toasts('create', {
-  title: 'Toast Title',
-  body: 'Lorem ipsum dolor sit amet, consetetur 2 sadipscing elitr.'
-})
-*/
-</script>
-<script>
-
-$(document).ready(function() {
-
-$.each($(document).find($("span")), function(index_, span_) {
-	if($(span_).attr('class') == "scope_url") {
-		$(span_).on('mouseover', function(event) {
-			$(span_).find($("span[data-id='copy_endpoint_url']")).stop().animate({
-				opacity: 1
-			})
-			
-		})
-		$(span_).on('mouseout', function(event) {
-			$(span_).find($("span[data-id='copy_endpoint_url']")).stop().animate({
-				opacity: 0
-			})
-		})
-		
-		$(span_).on('click', function(event) {
-		var scope_url_raw = $(span_).html().split("<")[0]
-			  var scope_url_copied = htmlDecode(scope_url_raw)
-			  copyTextToClipboard(scope_url_copied)
-			  $(span_).find($("span[data-id='copy_endpoint_url']")).css({
-				opacity: 0
-			})
-			
-			$(span_).find($("span[data-id='copy_endpoint_url']")).stop().animate({
-				opacity: 1
-			}, 600)
-			
-			  $(document).Toasts('create', {
-			  title: 'Copied!',
-			  body: 'Copied to clipboard',
-			  autohide: true,
-			  delay: 2000,
-			  autoremove: true,
-			  icon: "far fa-copy"
-			})
-		})
-	
-	}
-})
-
-})
-
-</script>
+{% endblock %}
+  </body>
+</html>

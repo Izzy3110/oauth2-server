@@ -3,13 +3,13 @@ import shutil
 import time
 import flask
 import sqlalchemy.exc
-
+import uuid
 from flask import Blueprint, request, session, url_for, current_app
 from flask import render_template, redirect, jsonify
 from werkzeug.security import gen_salt
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
-from .models import db, User, OAuth2Client
+from .models import db, User, OAuth2Client, Applications
 from .oauth2 import authorization, require_oauth
 from datetime import datetime
 
@@ -212,7 +212,7 @@ def home():
             errors_ =  ValidateFormInput(username, password, email).test_length().errors
             if len(errors_) > 0:
                 # print(len(errors_))
-                return render_template('home.html', user=None, clients=[], errors=errors_)
+                return render_template('clients.html', user=None, clients=[], errors=errors_)
 
             now_ = gen_date()
             user = User(username=username, password=password_ if password_ is not None else password, email=email,
@@ -231,7 +231,7 @@ def home():
                         "error_code": "NOT_UNIQUE_STRING"
                     }
                     errors_.append(error)
-                    return render_template('home.html', user=None, clients=[], errors=errors_)
+                    return render_template('clients.html', user=None, clients=[], errors=errors_)
 
         else:
             if is_login:
@@ -242,7 +242,7 @@ def home():
                         "error_code": "NOT_MATCH"
                     }
                     errors_.append(error)
-                    return render_template('home.html', user=None, clients=[], errors=errors_)
+                    return render_template('clients.html', user=None, clients=[], errors=errors_)
 
             time_then = time.mktime(datetime.strptime(user.date_last_login, '%Y-%m-%d %H:%M:%S.%f').timetuple())
 
@@ -270,12 +270,12 @@ def home():
 
         clients = OAuth2Client.query.filter_by(user_id=user.id).all()
 
-        return render_template('home.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
+        return render_template('clients.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
                                errors={}, authenticated=authenticated)
 
     else:
 
-        return render_template('home.html', user=None, user_date_last_login="", clients=clients,
+        return render_template('clients.html', user=None, user_date_last_login="", clients=clients,
                                errors={}, authenticated=authenticated)
 
 @bp.route('/scopes', methods=['GET', 'POST'])
@@ -307,7 +307,7 @@ def scopes_template_index():
                         "error_code": "NOT_MATCH"
                     }
                     errors_.append(error)
-                    return render_template('home.html', user=None, clients=[], errors=errors_)
+                    return render_template('clients.html', user=None, clients=[], errors=errors_)
             time_then = time.mktime(datetime.strptime(user.date_last_login, '%Y-%m-%d %H:%M:%S.%f').timetuple())
 
             elapsed_ = int(time.time() - time_then)
@@ -340,7 +340,58 @@ def scopes_index():
     scopes_ = get_scopes()
     return jsonify({"scopes": scopes_})
 
+@bp.route('/create_application', methods=['POST', 'GET'])
+def create_application():
+    if request.method == "POST":
+        application_name = request.form.get("application_name")
+        if len(application_name) > 0:
+            application_uuid = str(uuid.uuid4())
+            print("new application_name: "+application_uuid)
+            
+        if "authenticated" in session.keys():
+            if session["id"] is not None:
+                    now_ = gen_date()
+                    user = User.query.filter_by(username=session["user"] ).first()
+                    
+                    now_ = gen_date()
+                    application_ = Applications(uuid=application_uuid, name=application_name, date_registered=now_, date_modified=now_, user_id=session["id"])
+                    db.session.add(application_)
+                    db.session.commit()
+                    
+                    clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+                    return render_template('create_application.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
+                                       errors=[])#
+    else:
+        if "authenticated" in session.keys():
+            
+            if session["id"] is not None:
+                    now_ = gen_date()
+                    user = User.query.filter_by(username=session["user"] ).first()
+                    clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+                    return render_template('create_application.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
+                                       errors=[])
+    return render_template("create_application.html")
 
+
+@bp.route('/applications', methods=['GET', 'POST'])
+def applications_index():
+    dbApplications = Applications().query.all()
+    if "authenticated" in session.keys():
+        print("is authenticated")
+        print(session)
+        user = User.query.filter_by(username=session["user"] ).first()
+        session["id"] = user.id
+        if session["id"] is not None:
+                now_ = gen_date()
+                user = User.query.filter_by(username=session["user"] ).first()
+                clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+                return render_template('applications.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
+                                   errors=[])
+    # print(dbApplications)
+    # return render_template('child.html', user=None, scopes=scopes_)
+    return render_template('applications.html')
+    
+    
 @bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     user = User.query.filter_by(username=session["user"]).first()
@@ -451,7 +502,7 @@ def api_weather(lat, lon):
         last_weather_t = time.time()
         last_weather_data_ = {
             "t": time.time(),
-            "data": Weather("", float(lat), float(lon)).last_weather_data
+            "data": Weather("b32454941f463f3cc6056da4bcf47fc9", float(lat), float(lon)).last_weather_data
         }
     else:
         if int(time.time() - last_weather_t) > 30:
