@@ -1,0 +1,13 @@
+	{% if authenticated %}
+	<div id="authenticated" style="width: 200px; border: 1px solid #ECECEC;">
+	  <div><h4>Authenticated</h4></div>
+	  <div style="display: table; width: 100%">
+	{% for username in authenticated.keys() %}
+		<div style="display: table-row">
+		  <div style="display: table-cell; width: 150px;" data-id="authenticated-user">{{ username }}</div>
+		  <div style="display: table-cell; width: auto;" data-id="authenticated-status">{{ authenticated[username] }}</div>
+		</div>
+	{% endfor %}
+	  </div>
+	</div>
+	{% endif %}

@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+oauth2.wyl-online.de.pem
+oauth2.wyl-online.de.key
+*.png
+key.bin
+salt.bin
+website/db.sqlite

@@ -1,0 +1,507 @@
+<script src="/static/jquery-ui-1.13.1.custom/external/jquery/jquery.js"></script>
+<script src="/static/jquery-ui-1.13.1.custom/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="/static/jquery-ui-1.13.1.custom/jquery-ui.min.css">
+<link rel="stylesheet" href="/static/jquery-ui-1.13.1.custom/jquery-ui.structure.min.css">
+<link rel="stylesheet" href="/static/jquery-ui-1.13.1.custom/jquery-ui.theme.min.css">
+<link rel="stylesheet" href="/static/adminlte/css/adminlte.css">
+ <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="/static/adminlte/plugins/fontawesome-free/css/all.min.css">
+<div class="wrapper">
+
+                                            
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/" class="nav-link">Home</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/" class="nav-link">Clients</a>
+      </li>
+	  <li class="nav-item d-none d-sm-inline-block">
+        <a href="/scopes" class="nav-link">Scopes</a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <!-- Navbar Search -->
+	  <!--
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button> 
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+				
+              </div> 
+            </div>
+          </form>
+        </div>
+      </li>
+--> 
+		 <li class="nav-item">
+		 <b>Last login was:</b> {{ user_date_last_login }}
+		 </li>
+      <!-- Messages Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-comments"></i>
+          <span class="badge badge-danger navbar-badge">3</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <a href="/" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              <img src="/static/adminlte/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  Brad Diesel
+                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">Call me whenever you can...</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="/" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              <img src="/static/adminlte/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  John Pierce
+                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">I got your message bro</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              <img src="/static/adminlte/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  Nora Silvester
+                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">The subject goes here</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="/" class="dropdown-item dropdown-footer">See All Messages</a>
+        </div>
+      </li>
+      <!-- Notifications Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-bell"></i>
+          <span class="badge badge-warning navbar-badge">15</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <span class="dropdown-header">15 Notifications</span>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-envelope mr-2"></i> 4 new messages
+            <span class="float-right text-muted text-sm">3 mins</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-users mr-2"></i> 8 friend requests
+            <span class="float-right text-muted text-sm">12 hours</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-file mr-2"></i> 3 new reports
+            <span class="float-right text-muted text-sm">2 days</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <i class="fas fa-th-large"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index3.html" class="brand-link">
+      <img src="/static/adminlte/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">AdminLTE 3</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          {% if user %}
+          <img src="/static/adminlte/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          {% endif %}
+        </div>
+        <div class="info">
+          {% if user %}
+          <a href="#" class="d-block">{{ user }}</a>
+          {% endif %}
+        </div>
+      </div>
+		
+      <!-- SidebarSearch Form -->
+      <!--<div class="form-inline">
+        <div class="input-group" data-widget="sidebar-search">
+          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-sidebar">
+              <i class="fas fa-search fa-fw"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+		-->
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item menu-closed">
+            <a href="/" class="nav-link active">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Clients & Auth
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/" class="nav-link active">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Clients</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/scopes" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Scopes</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+		  {% if user %}
+          <li class="nav-item">
+            <a href="/logout" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Logout
+                <!-- <span class="right badge badge-danger">New</span> -->
+              </p>
+            </a>
+          </li>
+		  {% endif %}
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Clients</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Starter Page</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+<style>
+
+.single_client {
+	width: 678px;
+	max-width: 678px;
+	margin: 1em;
+	/* border: 1px solid #333; */
+	padding: .3em;
+}
+
+.client_width_max {
+	max-width: 645px;
+}
+
+.client_width_min {
+	min-width: 645px;
+}
+
+.cell {
+	display: table-cell;
+}
+
+.client_metadata_cell, .client_info_cell {
+	width: 225px;
+}
+
+.client_metadata_value_cell, .client_info_value_cell {
+	width: 420px;
+}
+
+.tbl  {
+	display: table;
+}
+
+.tbl_row {
+	display: table-row;
+}
+
+.tbl_full  {
+	display: table;
+	width: 100%;
+}
+
+.sortable {
+ 
+  /*
+  border: 1px solid rgb(0, 0, 0);
+  border-image: none;
+  */
+  min-height: 70px;
+  float: left;
+}
+
+#clients_container {
+overflow: auto;
+}
+</style>
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <!-- /.row -->
+        <div class="row">
+          <div class="col-md-12">
+
+            {% if user %}
+<style>pre{white-space:wrap}</style>
+<div>Logged in as <strong>{{user}}</strong> (<a href="{{ url_for('.logout') }}">Log Out</a>)</div>
+<div id="clients_container" class="container-fluid" style="margin: .4em; width: 84vw; border: 1px solid #ECECEC;">
+  <h2>Clients</h2>
+  
+  <div>
+  <a href="{{ url_for('.create_client') }}">Create Client</a>
+</div>
+  
+  
+{% for client in clients %}
+  <div class="single_client  sortable" data-client-name="{{ client.client_metadata['client_name'] }}" data-client-id="{{ client.client_info['client_id'] }}">
+  <h3>{{ client.client_metadata['client_name'] }}</h3>
+    <div data-id="client_metadata" class="client_width_max client_width_min">
+	  <div class="tbl">
+	  
+	  {% for key in client.client_metadata %}
+	  <div class="tbl_row">
+	  <div class="cell client_metadata_cell">
+	  {{ key }}
+	  </div>
+	  <div class="cell client_metadata_value_cell">
+	  <span data-key="client_metadata" data-key-value="{{ key }}" data-value="{{ client.client_metadata[key] }}">{{ client.client_metadata[key] }}</span>
+	  </div>
+	  </div>
+	  {% endfor %}
+	  
+	  </div>
+  </div>
+  <div data-id="client_info" class="client_width_max client_width_min">
+	  <div class="tbl">
+	  
+	  {% for key in client.client_info %}
+	  <div class="tbl_row">
+	  <div class="cell client_info_cell">
+	  {{ key }}
+	  </div>
+	  <div class="cell client_info_value_cell">
+	  <span data-key="client_info" data-key-value="{{ key }}" data-value="{{ client.client_info[key] }}">{{ client.client_info[key] }}</span>
+	  </div>
+	  </div>
+	  {% endfor %}
+	  
+	  </div>
+  </div>
+  <br>
+</div>
+
+
+{% endfor %}
+  <div style="clear: both"></div>
+  </div>
+{% if authenticated %}
+<div id="authenticated" style="width: 200px; border: 1px solid #ECECEC;">
+  <div><h4>Authenticated</h4></div>
+  <div style="display: table; width: 100%">
+{% for username in authenticated.keys() %}
+    <div style="display: table-row">
+      <div style="display: table-cell; width: 150px;" data-id="authenticated-user">{{ username }}</div>
+      <div style="display: table-cell; width: auto;" data-id="authenticated-status">{{ authenticated[username] }}</div>
+    </div>
+
+{% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% else %}
+<form action="" method="post">
+  <input class="ui-autocomplete-input ui-corner-all" type="text" name="username" placeholder="username" autocomplete="on"><br>
+    {% for error in errors %}
+{% if error["type"] == "username" %}
+  <div class="error_container">
+  <span data-code="">
+    {% if error["error_code"] == "EMPTY_STRING" %}
+    Username cannot be empty
+    {% endif %}
+    </span>
+    </div>
+  {% endif %}
+  {% endfor %}
+
+  <input class="ui-autocomplete-input ui-corner-all" type="text" name="email" placeholder="email" autocomplete="on"><br>
+  {% for error in errors %}
+{% if error["type"] == "email" %}
+  <div class="error_container">
+  <span data-code="">
+    {% if error["error_code"] == "EMPTY_STRING" %}
+    Email cannot be empty
+     {% elif error["error_code"] == "NOT_UNIQUE_STRING" %}
+    Email must be unique
+    {% endif %}
+    </span>
+    </div>
+  {% endif %}
+  {% endfor %}
+  <input class="ui-corner-all" type="password" name="password" placeholder="password"><br>
+      {% for error in errors %}
+  {{ error["type"] }}
+{% if error["type"] == "password" %}
+  <div class="error_container">
+  <span data-code="">
+    {% if error["error_code"] == "EMPTY_STRING" %}
+    Password cannot be empty
+    {% elif error["error_code"] == "NOT_MATCH" %}
+
+    Password/User Combination not found
+
+
+    {% endif %}
+    </span>
+    </div>
+  {% endif %}
+  {% endfor %}
+  <button class="ui-button" type="submit">Login / Signup</button>
+</form>
+
+
+
+{% endif %}
+
+          </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="float-right d-none d-sm-inline">
+      Anything you want
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+
+
+<!-- Bootstrap 4 -->
+<script src="/static/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/adminlte/js/adminlte.min.js"></script>
+<script>
+/*
+  $(document).Toasts('create', {
+  title: 'Toast Title',
+  body: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+})
+  $(document).Toasts('create', {
+  title: 'Toast Title',
+  body: 'Lorem ipsum dolor sit amet, consetetur 2 sadipscing elitr.'
+})
+*/
+</script>
