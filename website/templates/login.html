@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block title %}Applications{% endblock %}
+{% block nav %}{{ super() }}{% endblock %}
+{% block sidebar %}{{ super() }}{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Login</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+				<li class="breadcrumb-item"><a href="/">Clients</a></li>
+				<li class="breadcrumb-item"><a href="/applications">Applications</a></li>
+				<li class="breadcrumb-item active">Login</li>
+				<li class="breadcrumb-item"><a href="/scopes">Scopes</a></li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <!-- /.row -->
+        <div class="row">
+          <div class="col-md-12">
+			<form action="/login" method="post">
+				<input class="ui-autocomplete-input ui-corner-all" type="text" name="username" placeholder="username" autocomplete="on"><br>
+				{% for error in errors %}
+				{% if error["type"] == "username" %}
+				<div class="error_container">
+					<span data-code="">{% if error["error_code"] == "EMPTY_STRING" %}Username cannot be empty{% endif %}</span>
+				</div>
+				{% endif %}
+				{% endfor %}
+
+			  <input class="ui-autocomplete-input ui-corner-all" type="text" name="email" placeholder="email" autocomplete="on"><br>
+				{% for error in errors %}
+				{% if error["type"] == "email" %}
+				<div class="error_container">
+				<span data-code="">
+					{% if error["error_code"] == "EMPTY_STRING" %}Email cannot be empty
+					{% elif error["error_code"] == "NOT_UNIQUE_STRING" %}Email must be unique{% endif %}
+				</span>
+				</div>
+				{% endif %}
+				{% endfor %}
+			  <input class="ui-corner-all" type="password" name="password" placeholder="password"><br>
+				{% for error in errors %}
+				{% if error["type"] == "password" %}
+				<div class="error_container">
+				<span data-code="">{% if error["error_code"] == "EMPTY_STRING" %}Password cannot be empty{% elif error["error_code"] == "STRING_LENGTH" %}Password must be a minimal size {{ error["min_length"] }}{% elif error["error_code"] == "NOT_MATCH" %}Password/User Combination not found{% endif %}</span>
+				</div>
+				{% endif %}
+				{% endfor %}
+			  <button class="ui-button" type="submit">Login / Signup</button>
+			</form>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}
+{% block right_sidebar %}{{ super() }}{% endblock %}

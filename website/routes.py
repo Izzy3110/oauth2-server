@@ -4,7 +4,7 @@ import time
 import flask
 import sqlalchemy.exc
 import uuid
-from flask import Blueprint, request, session, url_for, current_app
+from flask import Blueprint, request, session, url_for, current_app, flash
 from flask import render_template, redirect, jsonify
 from werkzeug.security import gen_salt
 from authlib.integrations.flask_oauth2 import current_token
@@ -16,6 +16,8 @@ from datetime import datetime
 from .wyl.security import SecurityManager
 from .wyl.mail_listener import Mail
 from .wyl.weather import Weather
+from .wyl.forms import LoginForm
+from .wyl.utils import Scopes, build_new_qry_str
 
 bp = Blueprint('home', __name__, template_folder="website/templates", static_folder="website/static",
                static_url_path="/static")
@@ -56,64 +58,7 @@ def split_by_crlf(s):
 authenticated = {}
 is_login = False
 
-method_names = ["POST","GET"]
 
-
-scope_files = ["website/routes.py"]
-
-def get_scopes():
-    scope_urls = []
-    for scope_file in scope_files:
-        lines = open(scope_file).read().splitlines()
-        lines_bp = []
-        for line_i in range(0, len(lines)):
-            line = lines[line_i]
-            if line.startswith("@bp"):
-                
-                if "@require_oauth" in lines[line_i+1]:
-                    lines_a_ = []
-                    for line_ in line.lstrip("@bp.route('").split("/"):
-                        if len(line_) > 0:
-                            if "'" in line_:
-                                lines_a_.append(line_.split("'")[0])
-                            else:
-                                lines_a_.append(line_)
-                    scope_method = "GET"
-                    spl_ = line.replace('"',"'").split("'")
-                    for item_i_ in range(0, len(spl_)):
-                        item_ = spl_[item_i_]
-                        if "methods" in item_:
-                            if spl_[item_i_+1] in method_names:
-                                scope_method = spl_[item_i_+1]
-                    scope_name = lines[line_i+1].replace('"',"'").split("'")[1]
-                    base_ = None
-                    section_ = None
-                    if ":" in scope_name:
-                        splitted_ = scope_name.split(":")
-                        base_ = splitted_[0]
-                        section_ = splitted_[1]
-                    new_scope = {
-                    "base": base_,
-                    "section": section_,
-                    "url": "/"+"/".join(lines_a_),
-                    "scope": scope_name,
-                    "method": scope_method
-                    }
-                    lines_bp.append(new_scope)
-                else:
-                    if "def" in lines[line_i+1]:
-                        method_ = "GET"
-                        # print(line)
-                        if "methods" in line:
-                            tmp_ = line.split("'")
-                            for t_i in range(0, len(tmp_)):
-                                t_ = tmp_[t_i]
-                                if "methods" in t_:
-                                    method_ = tmp_[t_i+1]
-                        
-                        scope_urls.append({"url": line.split("'")[1], "method": method_})
-                        # print(lines[line_i+1])
-    return {"scopes": lines_bp, "urls": scope_urls}
 
 
 class ValidateFormInput(object):
@@ -155,12 +100,12 @@ class ValidateFormInput(object):
             if self.variables[variable_name] is not None:
                 # print(variable_name)
                 # print(self.variables[variable_name])
-                
+
                 min_ = self.variable_min_length[variable_name] if min_length is None else min_length
                 # print("len("+self.variables[variable_name]+") >= "+str(min_))
                 # print(len(self.variables[variable_name]) >= min_)
                 ret = True if len(self.variables[variable_name]) >= min_ else False
-                ret_data = "> "+str(min_)
+                ret_data = "> " + str(min_)
                 if ret:
                     tests_ok.append({"var": variable_name, "test": "len", "ret": ret_data})
                 else:
@@ -177,12 +122,103 @@ class ValidateFormInput(object):
                             "error_code": "STRING_LENGTH",
                             "min_length": ret_data
                         })
-                
+
         self.tests_ok = tests_ok
         self.tests_failed = tests_failed
         return self
 
+
 errors_ = None
+
+
+def encrypt_user_password(password):
+    sec_man = SecurityManager()
+    sec_man.setup_key()
+    return sec_man.encrypt_password(password)
+
+
+from urllib.parse import urlsplit
+
+
+@bp.route('/login2', methods=["GET", "POST"])
+def login_index2():
+    logged_in = False
+    if "authenticated" in session.keys():
+        if session["authenticated"]:
+            logged_in = True
+    if not logged_in:
+        form = LoginForm()
+        if form.validate_on_submit():
+            if test_authentication(form.username.data, form.password.data, True):
+                user = User.query.filter_by(username=form.username.data).first()
+                user_info = {
+                    'name': user.username
+                }
+                flash('login successful')
+                return render_template('forms/index.html', user=user_info)
+        return render_template('forms/login.html', form=form)
+    else:
+        print(session.keys())
+        if "user" in session.keys():
+            user = User.query.filter_by(username=session["user"]).first()
+            if user is not None:
+                user_info = {
+                    'name': user.username
+                }
+                return render_template('forms/index.html', user=user_info)
+
+
+def test_authentication(username, password, dont_update_login_time=None):
+    user = User.query.filter_by(username=username).first()
+    if user is not None:
+        if user.check_password(password):
+
+            if dont_update_login_time is None:
+                time_then = time.mktime(datetime.strptime(user.date_last_login, '%Y-%m-%d %H:%M:%S.%f').timetuple())
+                elapsed_ = int(time.time() - time_then)
+                if elapsed_ >= 1:
+                    dt_object = datetime.fromtimestamp(time.time())
+                    user.date_last_login = dt_object.strftime('%Y-%m-%d %H:%M:%S.%f')
+
+            user.authenticated = 1
+            db.session.commit()
+
+            session['id'] = user.id
+            session['user'] = str(user)
+            session['authenticated'] = True
+            return True
+    return False
+
+
+
+
+@bp.route('/login', methods=['GET', 'POST'])
+def login_index():
+    url_s = urlsplit(request.headers.get("Referer"))
+    new_qry_str = build_new_qry_str(request.headers.get("Referer"))
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+        if user is not None:
+            if test_authentication(username, password):
+                if url_s.path == "/login":
+                    return redirect("/?" + new_qry_str)
+                return redirect(url_s.path+"?"+new_qry_str)
+            else:
+                if not user.check_password(password):
+                    return render_template('clients.html', user=None, clients=[], errors=[{
+                        "type": "password",
+                        "error_code": "NOT_MATCH"
+                    }])
+        else:
+            return render_template('clients.html', user=None, clients=[], errors=[{
+                "type": "password",
+                "error_code": "NOT_MATCH"
+            }])
+    else:
+        return render_template("login.html")
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def home():
@@ -198,7 +234,7 @@ def home():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        
+
         if len(password) > 0:
             password_ = sec_man.encrypt_password(password)
             if not email:
@@ -209,7 +245,7 @@ def home():
 
         if not user:
             errors_ = []
-            errors_ =  ValidateFormInput(username, password, email).test_length().errors
+            errors_ = ValidateFormInput(username, password, email).test_length().errors
             if len(errors_) > 0:
                 # print(len(errors_))
                 return render_template('clients.html', user=None, clients=[], errors=errors_)
@@ -264,8 +300,7 @@ def home():
     else:
         print(session)
         user = current_user(session)
-        
-            
+
     if user is not None:
 
         clients = OAuth2Client.query.filter_by(user_id=user.id).all()
@@ -278,55 +313,21 @@ def home():
         return render_template('clients.html', user=None, user_date_last_login="", clients=clients,
                                errors={}, authenticated=authenticated)
 
+
+def get_current_user():
+    if "authenticated" in session.keys():
+        return session["user"]
+    return False
+
+
 @bp.route('/scopes', methods=['GET', 'POST'])
 def scopes_template_index():
     user = None
-    scopes_ = get_scopes()
-    if "authenticated" in session.keys():
-        if session["id"] is not None:
-            now_ = gen_date()
-            user = User.query.filter_by(username=session["user"] ).first()
-            clients = OAuth2Client.query.filter_by(user_id=user.id).all()
-            return render_template('scopes.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
-                               errors={}, scopes=scopes_)
-    if request.method == "POST":
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        
-        if len(password) > 0:
-            sec_man = SecurityManager()
-            sec_man.setup_key()
-            password_ = sec_man.encrypt_password(password)
-            print("pass: "+password_)
-            user = User.query.filter_by(username=username).first()
-            if not user.check_password(password):
-                    errors_ = []
-                    error = {
-                        "type": "password",
-                        "error_code": "NOT_MATCH"
-                    }
-                    errors_.append(error)
-                    return render_template('clients.html', user=None, clients=[], errors=errors_)
-            time_then = time.mktime(datetime.strptime(user.date_last_login, '%Y-%m-%d %H:%M:%S.%f').timetuple())
-
-            elapsed_ = int(time.time() - time_then)
-
-            if elapsed_ >= 1:
-                dt_object = datetime.fromtimestamp(time.time())
-                user.date_last_login = dt_object.strftime('%Y-%m-%d %H:%M:%S.%f')
-
-            user.authenticated = 1
-
-            db.session.commit()
-
-            session['id'] = user.id
-            session['user'] = str(user)
-            session['authenticated'] = True
-            clients = OAuth2Client.query.filter_by(user_id=user.id).all()
-            return render_template('scopes.html', user=user, user_date_last_login=user.date_last_login, clients=clients if clients is not None else [],
-                               errors=[], scopes=scopes_)
-    return render_template('scopes.html', user=None, scopes=scopes_)
+    user_name = get_current_user()
+    if user_name:
+        user = User.query.filter_by(username=user_name).first()
+    scopes_ = Scopes().get_scopes()
+    return render_template('scopes.html', user=user, scopes=scopes_)
 
 
 @bp.route('/api/scopes', methods=['POST'])
@@ -334,11 +335,13 @@ def scopes_template_index():
 def api_scopes_write():
     return jsonify({"set_scopes": False, "aler": "WARNING"})
 
+
 @bp.route('/api/scopes', methods=['GET'])
 @require_oauth("scopes:read")
 def scopes_index():
-    scopes_ = get_scopes()
+    scopes_ = Scopes().get_scopes()
     return jsonify({"scopes": scopes_})
+
 
 @bp.route('/create_application', methods=['POST', 'GET'])
 def create_application():
@@ -346,52 +349,57 @@ def create_application():
         application_name = request.form.get("application_name")
         if len(application_name) > 0:
             application_uuid = str(uuid.uuid4())
-            print("new application_name: "+application_uuid)
-            
+            print("new application_name: " + application_uuid)
+
         if "authenticated" in session.keys():
             if session["id"] is not None:
-                    now_ = gen_date()
-                    user = User.query.filter_by(username=session["user"] ).first()
-                    
-                    now_ = gen_date()
-                    application_ = Applications(uuid=application_uuid, name=application_name, date_registered=now_, date_modified=now_, user_id=session["id"])
-                    db.session.add(application_)
-                    db.session.commit()
-                    
-                    clients = OAuth2Client.query.filter_by(user_id=user.id).all()
-                    return render_template('create_application.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
-                                       errors=[])#
+                now_ = gen_date()
+                user = User.query.filter_by(username=session["user"]).first()
+
+                now_ = gen_date()
+                application_ = Applications(uuid=application_uuid, name=application_name, date_registered=now_,
+                                            date_modified=now_, user_id=session["id"])
+                db.session.add(application_)
+                db.session.commit()
+
+                clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+                return render_template('create_application.html', user=user, user_date_last_login=user.date_last_login,
+                                       clients=clients,
+                                       errors=[])  #
     else:
         if "authenticated" in session.keys():
-            
+
             if session["id"] is not None:
-                    now_ = gen_date()
-                    user = User.query.filter_by(username=session["user"] ).first()
-                    clients = OAuth2Client.query.filter_by(user_id=user.id).all()
-                    return render_template('create_application.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
+                now_ = gen_date()
+                user = User.query.filter_by(username=session["user"]).first()
+                clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+                return render_template('create_application.html', user=user, user_date_last_login=user.date_last_login,
+                                       clients=clients,
                                        errors=[])
     return render_template("create_application.html")
 
 
 @bp.route('/applications', methods=['GET', 'POST'])
 def applications_index():
+    print(session)
     dbApplications = Applications().query.all()
     if "authenticated" in session.keys():
         print("is authenticated")
         print(session)
-        user = User.query.filter_by(username=session["user"] ).first()
+        user = User.query.filter_by(username=session["user"]).first()
         session["id"] = user.id
         if session["id"] is not None:
-                now_ = gen_date()
-                user = User.query.filter_by(username=session["user"] ).first()
-                clients = OAuth2Client.query.filter_by(user_id=user.id).all()
-                return render_template('applications.html', user=user, user_date_last_login=user.date_last_login, clients=clients,
+            now_ = gen_date()
+            user = User.query.filter_by(username=session["user"]).first()
+            clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+            return render_template('applications.html', user=user, user_date_last_login=user.date_last_login,
+                                   clients=clients,
                                    errors=[])
     # print(dbApplications)
     # return render_template('child.html', user=None, scopes=scopes_)
     return render_template('applications.html')
-    
-    
+
+
 @bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     user = User.query.filter_by(username=session["user"]).first()
@@ -409,12 +417,11 @@ def logout():
         del session['authenticated']
     return redirect('/')
 
+
 @bp.route('/applications/test', methods=('GET', 'POST'))
 def create_client_test():
     user = current_user(session)
     return render_template("applications.html")
-    
-
 
 
 @bp.route('/create_client', methods=('GET', 'POST'))
@@ -545,6 +552,7 @@ def api_projects():
 def api_projects_write():
     user = current_token.user
     return jsonify(id=user.id, username=user.username)
+
 
 @bp.route('/api/me')
 @require_oauth('profile:read')
