@@ -45,7 +45,7 @@
 
 </div>
 {% else %}
-<form action="" method="post">
+<form action="/login" method="post">
   <input class="ui-autocomplete-input ui-corner-all" type="text" name="username" placeholder="username" autocomplete="on"><br>
     {% for error in errors %}
 {% if error["type"] == "username" %}
