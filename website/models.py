@@ -12,7 +12,16 @@ from .wyl.security import SecurityManager
 
 db = SQLAlchemy()
 
-
+class Scopes(db.Model):
+    __tablename__ = 'scopes'
+    id = db.Column(db.Integer, primary_key=True)
+    base = db.Column(db.String(250))
+    section = db.Column(db.String(250))
+    scope = db.Column(db.String(250), nullable=False)
+    url = db.Column(db.String(250), nullable=False)
+    methods = db.Column(db.String(250), nullable=False)
+    date_first_seen = db.Column(db.String(120))
+    
 class Applications(db.Model):
     __tablename__ = 'applications'
     id = db.Column(db.Integer, primary_key=True)
