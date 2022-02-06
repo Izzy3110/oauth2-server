@@ -405,8 +405,16 @@ def logout():
             authenticated[session["user"]] = 0
 
     del session['id']
-    del session['authenticated']
+    if "authenticated" in session.keys():
+        del session['authenticated']
     return redirect('/')
+
+@bp.route('/applications/test', methods=('GET', 'POST'))
+def create_client_test():
+    user = current_user(session)
+    return render_template("applications.html")
+    
+
 
 
 @bp.route('/create_client', methods=('GET', 'POST'))
