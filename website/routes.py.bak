@@ -198,7 +198,6 @@ def login_index():
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        print(user)
         if user is not None:
             if test_authentication(username, password):
                 if url_s.path == "/login":

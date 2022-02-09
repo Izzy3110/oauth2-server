@@ -142,7 +142,7 @@ overflow: auto;
   <div style="clear: both"></div>
   </div>
 {% else %}
-<form action="/login" method="post">
+<form action="/" method="post">
   <input class="ui-autocomplete-input ui-corner-all" type="text" name="username" placeholder="username" autocomplete="on"><br>
     {% for error in errors %}
 {% if error["type"] == "username" %}
