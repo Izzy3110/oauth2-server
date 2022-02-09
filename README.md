@@ -1,9 +1,53 @@
-# 
+# Oauth2-Server Instructions
 
-## start with
+## Features:
+ - Check unseen mails (tested with GMX.de)
+
+### Server-Scripts
+ - website/client_scripts/now_playing.py
+   - Insert Data to SQL Database with now-playing data from Spotify-API
+   - TODO: change volume during ads
+
+## Run Server with https (tested with letsencrypt-certificate)
 ```
 /usr/bin/python3.8 -m flask run --cert=certificate.pem --key=certificate.key
 ```
+
+## Client creation
+ - Register at [https://oauth2.wyl-online.de](https://oauth2.wyl-online.de)
+ - Create a client with the desired scope ([https://oauth2.wyl-online.de/scopes](https://oauth2.wyl-online.de/scopes) for more informations)
+
+## Authentication flow
+ - required ENV Parameters:
+  - username: APP_USERNAME 
+  - password: USER_PASSWORD
+  - scope: type(str)
+  - grant_type: type(str)
+
+#### Example Request to receive a token
+````
+resp = req_session.post("https://oauth2.wyl-online.de/oauth/token",data={
+                        "username": os.environ["APP_USERNAME"],
+                        "password": os.environ["USER_PASSWORD"],
+                        "scope": "spotify:now-playing",
+                        "grant_type": "password"
+})
+````
+
+### Example JSON response if successful
+````
+{
+    "access_token": "87SJp10sKDPhGDcnRlC4wc89MFbZ2CGkUNMCgzUzoL",
+    "expires_in": 864000,
+    "refresh_token": "ATSSBT5P1v8bcPA6jNs7D4Wm3plMw8jEJOAZOYIKgXK9pBz0",
+    "scope": "spotify:now-playing",
+    "token_type": "Bearer"
+}
+````
+
+### Continuation after expiration of Token
+ - TODO !!!!
+
 
 #### Author: Sascha Frank
 ##### sascha.frank.88@gmx.de
