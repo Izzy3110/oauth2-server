@@ -22,7 +22,7 @@ class SpotifyLastSongs(db.Model):
     artist = db.Column(db.String(250), nullable=False)
     title = db.Column(db.String(250), nullable=False)
     song_id = db.Column(db.String(250), nullable=False)
-    
+    date_seen = db.Column(db.String(120))
 
 class Scopes(db.Model):
     __tablename__ = 'scopes'

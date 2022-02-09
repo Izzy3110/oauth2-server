@@ -9,7 +9,7 @@ from flask import render_template, redirect, jsonify
 from werkzeug.security import gen_salt
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
-from .models import db, User, OAuth2Client, Applications
+from .models import db, User, OAuth2Client, Applications, SpotifyLastSongs
 from .oauth2 import authorization, require_oauth
 from datetime import datetime
 
@@ -626,4 +626,12 @@ def spotify_now_playing():
     last_song_updated_t = time.time()
     user = current_token.user
     print(user)
+    print(user.id)
+    
+    
+    now_ = gen_date()
+    spotify_insert = SpotifyLastSongs(user_id=user.id, artist=artist, title=title, song_id=song_id, date_seen=now_)
+    db.session.add(spotify_insert)
+    db.session.commit()
+    
     return jsonify(id=user.id, username=user.username, now_playing={"artist": artist, "title": title, "song_id": song_id})
