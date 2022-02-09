@@ -12,6 +12,18 @@ from .wyl.security import SecurityManager
 
 db = SQLAlchemy()
 
+
+class SpotifyLastSongs(db.Model):
+    __tablename__ = 'spotify_last_songs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    user = db.relationship('User')
+    artist = db.Column(db.String(250), nullable=False)
+    title = db.Column(db.String(250), nullable=False)
+    song_id = db.Column(db.String(250), nullable=False)
+    
+
 class Scopes(db.Model):
     __tablename__ = 'scopes'
     id = db.Column(db.Integer, primary_key=True)

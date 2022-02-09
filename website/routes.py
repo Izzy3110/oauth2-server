@@ -190,15 +190,17 @@ def test_authentication(username, password, dont_update_login_time=None):
     return False
 
 
+
+
 @bp.route('/login', methods=['GET', 'POST'])
 def login_index():
     url_s = urlsplit(request.headers.get("Referer"))
+    print(url_s)
     new_qry_str = build_new_qry_str(request.headers.get("Referer"))
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        print(user)
         if user is not None:
             if test_authentication(username, password):
                 if url_s.path == "/login":
@@ -611,7 +613,6 @@ def api_me_write():
                            error="email already set to " + new_email)
 
     return jsonify(id=user.id, username=user.username)
-
 
 last_song_updated_t = 0
 
